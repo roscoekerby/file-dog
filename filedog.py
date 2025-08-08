@@ -13,8 +13,18 @@ VALID_EXTENSIONS = {'.py', '.html', '.js', '.css', '.dart', '.txt', '.md', '.yam
 class FileDog:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("🐕 FileDog - Advanced File Selector")
+        self.root.title("FileDog - Advanced File Selector")
         self.root.geometry("900x700")
+
+        # Set window icon
+        try:
+            # Try to load the icon file - adjust path as needed
+            icon_path = self.find_icon_file()
+            if icon_path:
+                self.root.iconbitmap(icon_path)
+        except Exception as e:
+            print(f"Could not load icon: {e}")
+            # Fallback to default
 
         # Data structures
         self.selected_files = set()
@@ -164,6 +174,24 @@ class FileDog:
         self.context_menu.add_separator()
         self.context_menu.add_command(label="📁 Select All in Folder", command=self.select_all_in_folder)
         self.context_menu.add_command(label="🚫 Exclude All in Folder", command=self.exclude_all_in_folder)
+
+    def find_icon_file(self):
+        """Find the icon file in common locations"""
+        possible_paths = [
+            "FileDog_icon.ico",
+            "FileDog_icon_256.ico",
+            "icons/FileDog_icon.ico",
+            "assets/FileDog_icon.ico",
+            os.path.join(os.path.dirname(__file__), "FileDog_icon.ico"),
+            os.path.join(os.path.dirname(__file__), "FileDog_icon_256.ico"),
+            os.path.join(os.path.dirname(__file__), "icons", "FileDog_icon.ico"),
+            os.path.join(os.path.dirname(__file__), "assets", "FileDog_icon.ico"),
+        ]
+
+        for path in possible_paths:
+            if os.path.exists(path):
+                return path
+        return None
 
     def select_base_directory(self):
         directory = filedialog.askdirectory(title="Select Base Directory")
